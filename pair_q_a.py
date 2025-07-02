@@ -1,29 +1,40 @@
 import fitz
 
-pdf = 'Higher-Past-Papers by topic.pdf'
-doc = fitz.open(pdf)
-current_pages = []
-output = []
+PDF = 'Higher-Past-Papers by topic.pdf'
 
+doc = fitz.open(PDF)
+
+pairs = []
+q_pages = []
+started = False
 for i, page in enumerate(doc, start=1):
     text = page.get_text()
     lower = text.lower()
-    if 'additional guidance' in lower:
-        if current_pages:
-            question_text = "\n".join(doc[j-1].get_text() for j in current_pages)
-            output.append({
-                'question_pages': current_pages.copy(),
-                'answer_page': i,
-                'question_text': question_text,
-                'answer_text': text
-            })
-            current_pages = []
-    else:
-        current_pages.append(i)
 
+    if not started:
+        if 'section 2' in lower and 'marks' in lower:
+            started = True
+        else:
+            continue
+
+    if any(kw in lower for kw in (
+        'for official use', 'candidate', 'instructions for the completion',
+        'data sheet', 'marking instructions')):
+        continue
+
+    if 'additional guidance' in lower:
+        if q_pages:
+            pairs.append((q_pages.copy(), i))
+            q_pages = []
+    else:
+        q_pages.append(i)
+
+# Keep doc open for snippet extraction
 with open('pairs.txt', 'w') as f:
-    for idx, pair in enumerate(output, 1):
-        f.write(f"Pair {idx}: Question pages {pair['question_pages']} -> Answer page {pair['answer_page']}\n")
-        f.write(pair['question_text'].strip().replace('\n',' ')[:200] + "\n")
-        f.write('Answer snippet: ' + pair['answer_text'].strip().replace('\n',' ')[:200] + "\n---\n")
-print('Total pairs', len(output))
+    for idx, (q, a) in enumerate(pairs, 1):
+        f.write(f"Pair {idx}: Question pages {q} -> Answer page {a}\n")
+        qt = ' '.join(doc.load_page(j-1).get_text().replace('\n',' ')[:80] for j in q)
+        at = doc.load_page(a-1).get_text().replace('\n',' ')[:80]
+        f.write(qt + '\n')
+        f.write('Answer snippet: ' + at + '\n---\n')
+print('Total pairs', len(pairs))

@@ -8,10 +8,14 @@ PDF = "Higher-Past-Papers by topic.pdf"
 OUTDIR = "pages"
 
 # Page ranges to skip (inclusive) - multiple choice sections
+# Multiple choice sections in the PDF
+# These were determined manually by inspecting the document.
+# Each tuple is inclusive start and end page numbers.
 SKIP_RANGES = [
-    (242, 260),
-    (380, 398),
-    (448, 470),
+    (242, 304),  # Specimen multi choice
+    (310, 347),  # Past paper multi choice
+    (380, 409),  # Past paper multi choice
+    (448, 479),  # Past paper multi choice
 ]
 
 # Determine page count
@@ -52,7 +56,7 @@ def in_skip(p):
             return True
     return False
 
-while page < num_pages:
+while page <= num_pages:
     if in_skip(page):
         page += 1
         continue

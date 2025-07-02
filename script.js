@@ -1,13 +1,4 @@
-let data = [];
-
-function loadData() {
-  fetch('index.json')
-    .then(resp => resp.json())
-    .then(json => {
-      data = json;
-      showQuestion();
-    });
-}
+// 'data' is provided by data.js
 
 function showQuestion() {
   if (data.length === 0) return;
@@ -23,4 +14,4 @@ document.getElementById('showBtn').addEventListener('click', () => {
 
 document.getElementById('nextBtn').addEventListener('click', showQuestion);
 
-loadData();
+showQuestion();

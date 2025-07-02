@@ -2,6 +2,8 @@
 
 This project includes a small webpage for practising past paper questions.
 
+The repository ships with a small sample `data.js` so the page works out of the box. To include every page from the PDF you must generate your own `data.js` as described below.
+
 ## Extracting questions
 
 To convert pages from the included PDF into individual PNG images, first install

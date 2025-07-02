@@ -1,0 +1,4 @@
+# build artifacts
+pages/
+data.js
+__pycache__/
